@@ -14,145 +14,72 @@
 \usepackage{natbib}
 \usepackage{doi}
 
+\def\vec#1{\mathchoice{\mbox{\boldmath$\displaystyle#1$}}
+{\mbox{\boldmath$\textstyle#1$}} {\mbox{\boldmath$\scriptstyle#1$}} {\mbox{\boldmath$\scriptscriptstyle#1$}}}
 
+\title{Применение машинного обучения в 5G. Нейросетевой приёмник и его CBAM модификация.}
 
-\title{A template for the \emph{arxiv} style}
-
-\author{ David S.~Hippocampus\thanks{Use footnote for providing further
-		information about author (webpage, alternative
-		address)---\emph{not} for acknowledging funding agencies.} \\
-	Department of Computer Science\\
-	Cranberry-Lemon University\\
-	Pittsburgh, PA 15213 \\
-	\texttt{hippo@cs.cranberry-lemon.edu} \\
-	%% examples of more authors
-	\And
-	Elias D.~Striatum \\
-	Department of Electrical Engineering\\
-	Mount-Sheikh University\\
-	Santa Narimana, Levand \\
-	\texttt{stariate@ee.mount-sheikh.edu} \\
-	%% \AND
-	%% Coauthor \\
-	%% Affiliation \\
-	%% Address \\
-	%% \texttt{email} \\
-	%% \And
-	%% Coauthor \\
-	%% Affiliation \\
-	%% Address \\
-	%% \texttt{email} \\
-	%% \And
-	%% Coauthor \\
-	%% Affiliation \\
-	%% Address \\
-	%% \texttt{email} \\
+\author{Бобров Е. А.\\
+	МГУ им. М.В. Ломоносова\\
+	факультет ВМК\\
+        119991, Москва, Ленинские горы, д.1, стр. 52\\
+        \And
+        Овсиенко О. П. \\
+	МГУ им. М.В. Ломоносова\\
+	факультет ВМК\\
+        119991, Москва, Ленинские горы, д.1, стр. 52\\
+	\texttt{st02220041@gse.cs.msu.ru} \\
 }
 \date{}
 
 \renewcommand{\shorttitle}{\textit{arXiv} Template}
 
-%%% Add PDF metadata to help others organize their library
-%%% Once the PDF is generated, you can check the metadata with
-%%% $ pdfinfo template.pdf
 \hypersetup{
-pdftitle={A template for the arxiv style},
-pdfsubject={q-bio.NC, q-bio.QM},
-pdfauthor={David S.~Hippocampus, Elias D.~Striatum},
-pdfkeywords={First keyword, Second keyword, More},
+pdftitle={My first paper Ovsienko},
+pdfkeywords={neural receiver, CBAM, 5G},
 }
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-	\lipsum[1]
+В статье исследуется применении методов машинного и глубокого обучения для оптимизации физического уровня (PHY Layer) в 5G-сетях. Рассмотрены традиционные методы обработки сигналов, такие как LMMSE-эквализация и LS-оценка канала, а также нейросетевые подходы, включая архитектуру с остаточными блоками от NVIDIA. Центральным результатом работы стала разработка модифицированного нейросетевого приёмника с механизмом внимания CBAM, который продемонстрировал превосходство над классическими методами в условиях многолучевого распространения и помех. Практическая значимость исследования заключается в возможности интеграции предложенного метода в современные системы связи для повышения их эффективности и устойчивости к помехам.
 \end{abstract}
 
+\keywords{традиционные методы обработки сигналов\and нейросетевой приёмник}
 
-\keywords{First keyword \and Second keyword \and More}
+\section*{Введение}
 
-\section{Introduction}
-\lipsum[2]
-\lipsum[3]
+Современные системы мобильной связи пятого поколения (5G) сталкиваются с необходимостью обеспечения исключительно высокой скорости передачи данных, сверхнизких задержек и надёжного соединения для миллионов устройств. Эти требования предъявляют новые вызовы к методам обработки сигналов на физическом уровне (PHY Layer), особенно в условиях многолучевого распространения и интерференции. Традиционные алгоритмы, такие как оценка канала методом наименьших квадратов (LS) и линейная эквализация (LMMSE), зачастую не справляются с растущей сложностью каналов, что стимулирует поиск более совершенных и адаптивных подходов.
 
-\section{Headings: first level}
-\label{sec:headings}
+Классические подходы к обработке сигналов в системах OFDM и MIMO, такие как оценка канала на основе пилот-сигналов и последующая LMMSE-эквализация, хорошо изучены и обеспечивают приемлемое качество в условиях умеренных помех. Однако их эффективность существенно снижается в сценариях с сильной интерференцией, быстрыми замираниями и в отсутствие точной информации о состоянии канала (Channel State Information, CSI). Метод наименьших квадратов (LS), будучи вычислительно простым, крайне чувствителен к шуму, в то время как более робастные методы, такие как LMMSE, требуют априорного знания статистики канала и шума, что зачастую недостижимо в реальных динамичных условиях.
 
-\lipsum[4] See Section \ref{sec:headings}.
+В последние годы активно развиваются методы машинного и глубокого обучения, демонстрирующие значительный потенциал для оптимизации телекоммуникационных систем. В частности, нейросетевые приёмники, способные обучаться сквозному преобразованию принятого сигнала в битовые последовательности, показывают результаты, превосходящие классические методы. Одной из таких современных архитектур является нейросетевой приёмник от NVIDIA, построенный на основе остаточных свёрточных блоков (Residual Blocks), который позволяет эффективно компенсировать искажения сигнала без явного знания матрицы канала.
 
-\subsection{Headings: second level}
-\lipsum[5]
-\begin{equation}
-	\xi _{ij}(t)=P(x_{t}=i,x_{t+1}=j|y,v,w;\theta)= {\frac {\alpha _{i}(t)a^{w_t}_{ij}\beta _{j}(t+1)b^{v_{t+1}}_{j}(y_{t+1})}{\sum _{i=1}^{N} \sum _{j=1}^{N} \alpha _{i}(t)a^{w_t}_{ij}\beta _{j}(t+1)b^{v_{t+1}}_{j}(y_{t+1})}}
-\end{equation}
+В данной работе предлагается модификация данного нейросетевого приёмника, направленная на дальнейшее повышение его эффективности. Модификация заключается во внедрении механизма внимания CBAM (Convolutional Block Attention Module) в структуру остаточных блоков. Этот механизм позволяет сети адаптивно выделять наиболее информативные признаки в частотно-временном и канальном пространствах, усиливая полезные компоненты сигнала и подавляя шумовые.
 
-\subsubsection{Headings: third level}
-\lipsum[6]
+Экспериментальные исследования, проведённые на стандартизированных моделях каналов CDL (Clustered Delay Line), подтвердили эффективность предложенного подхода. Модифицированный приёмник продемонстрировал устойчивое улучшение показателя BLER (Block Error Rate) по сравнению как с классическими методами (LS, LMMSE), так и с базовой нейросетевой архитектурой, в особенности в условиях нелинейной видимости (NLOS) и при низких отношениях сигнал/шум. Таким образом, вклад работы заключается в разработке и валидации усовершенствованной архитектуры приёмника, что открывает пути для создания более помехоустойчивых и спектрально-эффективных систем связи следующего поколения.
 
-\paragraph{Paragraph}
-\lipsum[7]
+\section*{Обзор литературы}
 
+Современные системы связи пятого поколения требуют принципиально новых подходов к обработке сигналов на физическом уровне. Традиционные методы, такие как оценка канала и эквализация, хорошо изучены, но имеют существенные ограничения в условиях сложных сценариев распространения сигнала. \citet{badr2019lmmse} проводит всесторонний анализ LMMSE-оценки канала в контексте OFDM систем, подчеркивая её преимущества перед более простыми методами, такими как метод наименьших квадратов (LS), но также отмечая зависимость от точного знания статистических характеристик канала. Исследование \citet{bagadi2010mimo} демонстрирует применение пилот-сигналов для оценки канала в системах MIMO-OFDM, что является стандартным подходом в современных системах связи.
 
+Архитектуры MIMO систем играют ключевую роль в повышении пропускной способности и надежности беспроводных каналов. \citet{shah2017performance} предоставляет сравнительный анализ различных конфигураций MIMO, включая SISO, SIMO, MISO и MIMO, показывая преимущества пространственного разнесения и мультиплексирования. Дальнейшее развитие MIMO технологий представлено в работе \citet{pessoa2020cdl}, где предлагается модель канала на основе CDL с двухполяризованными антеннами, специально адаптированная для сценариев 5G в сельской местности.
 
-\section{Examples of citations, figures, tables, references}
-\label{sec:others}
+Теоретические основы достижимых скоростей передачи в системах связи продолжают развиваться. \citet{bjornson2015achievable} исследует предельные возможности Rician MIMO каналов с учетом аппаратных искажений, что особенно актуально для систем массового MIMO. В то же время \citet{caire2017achievable} фокусируется на методах вероятностного формирования сигналов (probabilistic shaping) для повышения спектральной эффективности.
 
-\subsection{Citations}
-Citations use \verb+natbib+. The documentation may be found at
-\begin{center}
-	\url{http://mirrors.ctan.org/macros/latex/contrib/natbib/natnotes.pdf}
-\end{center}
+Прорыв в области глубокого обучения открыл новые перспективы для оптимизации физического уровня. Архитектура глубоких остаточных свёрточных сетей, представленная в работе \citet{he2016deep}, стала фундаментом для многих последующих разработок, включая нейросетевые приемники. Механизмы внимания, такие как CBAM (Convolutional Block Attention Module) из исследования \citet{woo2018cbam}, демонстрируют эффективность в выделении информативных признаков в компьютерном зрении, что может быть успешно перенесено на задачи обработки сигналов.
 
-Here is an example usage of the two main commands (\verb+citet+ and \verb+citep+): Some people thought a thing \citep{kour2014real, hadash2018estimate} but other people thought something else \citep{kour2014fast}. Many people have speculated that if we knew exactly why \citet{kour2014fast} thought this\dots
+Современные инструменты для исследований в области связи, такие как Sionna от NVIDIA \citep{sionna}, предоставляют мощную платформу для сквозного моделирования систем связи и интеграции методов машинного обучения. В частности, \citet{sionna2023neural} демонстрирует применение нейросетевых приемников для OFDM SIMO систем. Исследования \citet{levis2020deeprx} и \citet{levis2020end} развивают концепцию полностью сверточного глубокого приемника и сквозного обучения для OFDM систем, включая возможность беспилотной коммуникации.
 
-\subsection{Figures}
-\lipsum[10]
-See Figure \ref{fig:fig1}. Here is how you add footnotes. \footnote{Sample of the first footnote.}
-\lipsum[11]
+Важным аспектом современных систем связи являются эффективные методы кодирования. Работы \citet{nguyen2019efficient} и \citet{nguyen2021low} посвящены разработке низкосложных декодеров QC-LDPC для 5G New Radio, что критически важно для практической реализации систем следующего поколения. Перспективным направлением является также совместное демодулирование сложных созвездий с использованием машинного обучения, как показано в исследовании \citet{gansekoele2025joint}.
 
-\begin{figure}
-	\centering
-	\includegraphics[width=0.5\textwidth]{../figures/log_reg_cs_exp.eps}
-	\caption{Sample figure caption.}
-	\label{fig:fig1}
-\end{figure}
-
-\subsection{Tables}
-See awesome Table~\ref{tab:table}.
-
-The documentation for \verb+booktabs+ (`Publication quality tables in LaTeX') is available from:
-\begin{center}
-	\url{https://www.ctan.org/pkg/booktabs}
-\end{center}
+Таким образом, современное состояние исследований демонстрирует четкий тренд к интеграции методов машинного обучения с классическими подходами обработки сигналов, что открывает новые возможности для создания более эффективных и устойчивых систем связи.
 
 
-\begin{table}
-	\caption{Sample table title}
-	\centering
-	\begin{tabular}{lll}
-		\toprule
-		\multicolumn{2}{c}{Part}                   \\
-		\cmidrule(r){1-2}
-		Name     & Description     & Size ($\mu$m) \\
-		\midrule
-		Dendrite & Input terminal  & $\sim$100     \\
-		Axon     & Output terminal & $\sim$10      \\
-		Soma     & Cell body       & up to $10^6$  \\
-		\bottomrule
-	\end{tabular}
-	\label{tab:table}
-\end{table}
-
-\subsection{Lists}
-\begin{itemize}
-	\item Lorem ipsum dolor sit amet
-	\item consectetur adipiscing elit.
-	\item Aliquam dignissim blandit est, in dictum tortor gravida eget. In ac rutrum magna.
-\end{itemize}
-
-
-\bibliographystyle{unsrtnat}
+\clearpage
+\bibliographystyle{plainnat}
 \bibliography{references}
+
 
 \end{document}
